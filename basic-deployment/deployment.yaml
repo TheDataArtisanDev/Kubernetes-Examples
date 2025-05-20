@@ -1,0 +1,26 @@
+apiVersion: apps/v1                     # 🔑 Kubernetes keyword – API version for Deployment
+kind: Deployment                        # 🔑 Kubernetes keyword – resource type
+
+metadata:                               # 🔑 Metadata about the deployment
+  name: nginx-deployment-name           # 🏷️ Custom name – your deployment's identifier
+  labels:                               # 🔑 Labels for grouping/selecting
+    app: nginx-app-label                # 🏷️ Custom label – used for selectors
+
+spec:                                   # 🔑 Desired configuration
+  replicas: 2                           # 🔑 Number of pod replicas to maintain
+
+  selector:                             # 🔑 Selects which pods this deployment manages
+    matchLabels:                        # 🔑 Must match pod labels exactly
+      app: nginx-app-label              # 🏷️ Matches the pod's app label
+
+  template:                             # 🔑 Template used for creating pods
+    metadata:                           # 🔑 Metadata for each pod
+      labels:                           # 🔑 Pod labels
+        app: nginx-app-label            # 🏷️ Custom label – same as above
+
+    spec:                               # 🔑 Pod specification
+      containers:                       # 🔑 List of containers
+        - name: nginx-container-name    # 🏷️ Custom container name
+          image: nginx:1.25             # 🏷️ Docker image used
+          ports:
+            - containerPort: 80         # 🔑 Port the container exposes internally

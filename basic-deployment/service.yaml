@@ -1,0 +1,16 @@
+apiVersion: v1                          # 🔑 Kubernetes keyword – API version for Service
+kind: Service                           # 🔑 Resource type: Service
+
+metadata:
+  name: nginx-service-name              # 🏷️ Custom name – your service's identifier
+
+spec:
+  selector:                             # 🔑 Selects pods using this label
+    app: nginx-app-label                # 🏷️ Must match label on the pod
+
+  ports:
+    - protocol: TCP                     # 🔑 Protocol type
+      port: 80                          # 🔑 Port the service exposes
+      targetPort: 80                    # 🔑 Port on the container the traffic is forwarded to
+
+  type: NodePort                        # 🔑 Service type – exposes app externally via Node IP and a dynamic port (30000–32767)
