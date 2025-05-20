@@ -1,4 +1,3 @@
-
 # ☸️ Kubernetes: The Complete Beginner Guide
 
 This document is a complete introduction to Kubernetes, starting from the very basics and diving deep into core components, architecture, and real-world use cases.
@@ -41,7 +40,6 @@ A deployment tells Kubernetes:
 
 * What image to use (like nginx, or your Flask app)
 * How many replicas (copies) to run
-
 * How to update and restart them if needed
 
 🧠 It’s like saying “Keep 2 instances of this app running at all times.”
@@ -156,13 +154,13 @@ A service exposes your pod(s) so you can:
 
 ```bash
 
-kubectlgetpods
+kubectl get pods
 
-kubectldescribepod <name>
+kubectl describe pod <name>
 
-kubectlapply-fdeployment.yaml
+kubectl apply -f deployment.yaml
 
-kubectldeletepod <name>
+kubectl delete pod <name>
 
 ```
 
@@ -189,6 +187,34 @@ kubectl describe <resource># Detailed info
 kubectl delete -f app.yaml# Deletes the object
 
 ```
+
+---
+
+## 🧱 Core Structure Summary
+
+Here’s how the core components of a Kubernetes system relate to each other:
+
+- A **Kubernetes cluster** consists of multiple **nodes** (which are virtual or physical machines).
+- Each **node** runs one or more **pods**, and each **pod** contains one or more **containers**.
+- A **container** is an executable environment that contains your application code, runtime, libraries, and dependencies.
+- A **pod** is the smallest deployable unit in Kubernetes and typically wraps a single container (but can wrap more).
+- A **deployment** is a Kubernetes object that manages a group of identical pods, ensuring that a specified number are always running and healthy.
+
+### 🔁 Visual Summary
+
+```
+Kubernetes Cluster
+├── Node A
+│   ├── Pod 1 (nginx)
+│   └── Pod 2 (nginx)
+├── Node B
+│   └── Pod 3 (nginx)
+```
+
+- The cluster manages all nodes.
+- Nodes run pods.
+- Pods run containers.
+- Containers run your app.
 
 ---
 
@@ -246,7 +272,197 @@ kubectldeleteservice <name>
 
 ```
 
+# Deployment and Monitoring Commands
+
+## 🚀 Steps to Deploy
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+Output:
+
+```
+deployment.apps/nginx-deployment created
+```
+
+```bash
+kubectl apply -f service.yaml
+```
+
+Output:
+
+```
+service/nginx-service created
+```
+
 ---
+
+## 📊 Kubectl commands
+
+## 🧱 Pods
+
+```bash
+kubectl get pods
+NAME                                     READY   STATUS    RESTARTS   AGE
+nginx-deployment-name-649bd6c7b4-fpksv   1/1     Running   0          6m19s
+nginx-deployment-name-649bd6c7b4-nkddf   1/1     Running   0          6m19s
+```
+
+## 📦 Deployments
+
+```bash
+kubectl get deployments
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment-name   2/2     2            2           6m28s
+```
+
+## 🌐 Services
+
+```bash
+kubectl get services
+NAME                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+kubernetes           ClusterIP   10.96.0.1      <none>        443/TCP        44h
+nginx-service-name   NodePort    10.103.157.4   <none>        80:32424/TCP   6m30s
+```
+
+Here,
+
+| **Part** | **Meaning**                                                                                                                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 80             | Service port — the port that the Service listens on inside the cluster. <br />This is what other services inside the cluster would use.                                           |
+| 31245          | NodePort — the external port opened on every Node in your cluster. <br />This is how you access the app from outside the cluster (e.g., from your browser using localhost:30168). |
+| TCP            | The protocol (usually TCP for web apps).                                                                                                                                           |
+
+**CLUSTER-IP**
+
+ClusterIP is the default type of Kubernetes Service.
+
+- It creates a virtual internal IP address **`inside the cluster,`** which only other resources in the cluster can access()not your laptop or the internet).
+- Internal virtual IP assigned to Service
+
+**EXTERNAL-IP:**
+
+Your access point from outside of the cluster
+
+| Access Type               | IP + Port                 | Who Can Access                                      |
+| ------------------------- | ------------------------- | --------------------------------------------------- |
+| **Internal Access** | `ClusterIP:ServicePort` | Other pods/services inside the cluster              |
+| **External Access** | `ExternalIP:NodePort`   | Users outside the cluster (like you on your laptop) |
+
+## 🖥️ Nodes
+
+```bash
+kubectl get nodes -o wide
+NAME             STATUS   ROLES           AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE         KERNEL-VERSION                       CONTAINER-RUNTIME
+<node-name>      Ready    control-plane   44h   v1.30.2   <internal-ip>  <none>        Docker Desktop   5.15.167.4-microsoft-standard-WSL2   docker://27.1.1
+```
+
+## 🔍 Specific Service
+
+```bash
+kubectl get svc nginx-service-name
+NAME                 TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+nginx-service-name   NodePort   10.103.157.4   <none>        80:32424/TCP   7m16s
+```
+
+## 🌐 Access the App
+
+If using Docker Desktop:
+
+```
+http://localhost:32424
+```
+
+You will see:
+
+```
+Welcome to nginx!
+If you see this page, the nginx web server is successfully installed and working.
+```
+
+---
+
+## 🧼 Clean Up Commands
+
+```bash
+kubectl delete service nginx-service
+```
+
+Output:
+
+```
+service "nginx-service" deleted
+```
+
+```bash
+delete deployment nginx-deployment
+```
+
+Output:
+
+```
+deployment.apps "nginx-deployment" deleted
+```
+
+## 🧼 Clean Up using YAML
+
+```bash
+kubectl delete -f service.yaml
+```
+
+Output:
+
+```
+service "nginx-service" deleted
+```
+
+```bash
+kubectl delete -f deployment.yaml
+```
+
+Output:
+
+```
+deployment.apps "nginx-deployment" deleted
+```
+
+---
+
+## 📚 Summary Table
+
+| Term                 | Description                                |
+| -------------------- | ------------------------------------------ |
+| **Cluster**    | Group of nodes (VMs)                       |
+| **Node**       | A single VM running pods                   |
+| **Pod**        | Smallest unit that runs containers         |
+| **Container**  | Runs your app (Nginx)                      |
+| **Deployment** | Manages multiple pod replicas              |
+| **Service**    | Provides network access to pods            |
+| **NodePort**   | Exposes app on a port on your host machine |
+| **ClusterIP**  | Internal-only virtual IP for services      |
+
+---
+
+## ✅ Command Summary
+
+| Command                              | Description                  | Sample Output                |
+| ------------------------------------ | ---------------------------- | ---------------------------- |
+| `kubectl apply -f deployment.yaml` | Create deployment            | `nginx-deployment created` |
+| `kubectl apply -f service.yaml`    | Create service               | `nginx-service created`    |
+| `kubectl get deployments`          | See deployments              | `2/2 running`              |
+| `kubectl get pods`                 | See pods                     | `Running`                  |
+| `kubectl get services`             | See service IP/ports         | `NodePort: 31245`          |
+| `minikube service nginx-service`   | Open service (Minikube only) | Opens browser                |
+| `kubectl delete -f *.yaml`         | Clean up                     | `deleted` messages         |
+
+---
+
+## 💡 Bonus Tips
+
+- Use `kubectl describe pod <pod-name>` to inspect pod events and container info.
+- Use `kubectl logs <pod-name>` to see logs from the container.
+- Add `resources` and `livenessProbe` in future projects for better reliability.
 
 ## 🧭 Resources
 
