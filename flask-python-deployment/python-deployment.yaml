@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-deployment-name                # 🏷️ Deployment name
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: python-app-label                   # 🔗 matches pod label
+  template:
+    metadata:
+      labels:
+        app: python-app-label                 # 🏷️ label for pod selection
+    spec:
+      containers:
+        - name: python-pod-name               # 🏷️ container name
+          image: python-docker-img:v1
+          ports:
+            - containerPort: 5000
