@@ -1,0 +1,27 @@
+# templates/deployment.yaml
+# This file defines the Kubernetes Deployment for the Nginx application using Helm templating syntax.
+# It dynamically sets the number of replicas, Docker image, labels, and container port based on values from values.yaml.
+# Helm renders this template into a Kubernetes-compliant YAML during installation, allowing reusable and customizable deployments.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nginx-helm.fullname" . }}     # Will resolve to chart-name-release-name
+  labels:
+    {{- include "nginx-helm.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}            # Pulls from values.yaml
+  selector:
+    matchLabels:
+      app: {{ include "nginx-helm.name" . }}      # Selects pods with this label
+  template:
+    metadata:
+      labels:
+        app: {{ include "nginx-helm.name" . }}    # Labels the pods
+    spec:
+      containers:
+        - name: nginx
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"  # Uses repo + tag from values.yaml
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 80

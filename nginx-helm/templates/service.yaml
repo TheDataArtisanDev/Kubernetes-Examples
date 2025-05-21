@@ -1,0 +1,13 @@
+# templates/service.yaml
+# Defines a Kubernetes Service that exposes the Nginx pod.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nginx-helm.fullname" . }}     # Same name pattern as deployment
+spec:
+  type: {{ .Values.service.type }}                # NodePort from values.yaml
+  ports:
+    - port: {{ .Values.service.port }}            # Exposed port
+      targetPort: 80                              # Matches the container port
+  selector:
+    app: {{ include "nginx-helm.name" . }}        # Selects pods with this label

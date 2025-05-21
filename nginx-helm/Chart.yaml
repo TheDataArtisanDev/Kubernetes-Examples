@@ -1,0 +1,9 @@
+# This file defines metadata about the Helm chart.
+# Helm uses it to understand the chart's identity and version.
+# It is required for all Helm charts and is typically located at the root of the chart directory.
+
+apiVersion: v2                   # Required: Helm chart API version (v2 for Helm 3+)
+name: nginx-helm                 # The name of the chart (NOT the app or release name)
+version: 0.1.0                   # Chart version (you can bump this with changes)
+description: A basic Nginx Helm chart
+appVersion: "1.25.2"             # The version of the application (Nginx here)

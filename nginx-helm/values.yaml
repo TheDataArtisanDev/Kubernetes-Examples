@@ -1,0 +1,18 @@
+# This file stores all the default values that templates can use.
+# These values can be overridden via command line or separate YAML files.
+replicaCount: 1                  # Number of Nginx pods to run
+
+image:                           # Image configuration
+  repository: nginx              # Docker image name
+  pullPolicy: IfNotPresent       # Only pull if not already present on the node
+  tag: "1.25.2"                  # Version tag for the image
+
+service:                         # Kubernetes Service configuration
+  type: NodePort                 # Type of service: ClusterIP, NodePort, LoadBalancer
+  port: 80                       # The port the service exposes
+
+resources: {}                    # Resource requests/limits for the container (empty = no limits)
+
+nodeSelector: {}                 # Node selection constraints (advanced)
+tolerations: []                  # Tolerations for taints (advanced)
+affinity: {}                     # Affinity rules (advanced)
