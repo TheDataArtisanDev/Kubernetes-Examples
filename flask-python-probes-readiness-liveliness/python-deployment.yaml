@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-deployment-name
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: python-app-label
+  template:
+    metadata:
+      labels:
+        app: python-app-label
+    spec:
+      containers:
+        - name: python-pod-name
+          image: flask-probe-docker-img:v1
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 5000
+            initialDelaySeconds: 2
+            periodSeconds: 5
